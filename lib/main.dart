@@ -1,59 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final String data = 'Top level data 777';
+  final String data = 'Top level data 111';
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return Provider<String>(
+      create: (context) => data,
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: HomePage(),
       ),
-      home: HomePage(data: data),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  final String data;
-  const HomePage({Key key, @required this.data}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          child: Text(data),
+          child: Text(context.watch<String>()),
         ),
       ),
       body: Center(
-        child: Widget1(data: data),
+        child: Widget1(),
       ),
     );
   }
 }
 
 class Widget1 extends StatelessWidget {
-  final String data;
-  const Widget1({Key key, @required this.data}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Widget2(data: data),
+      child: Widget2(),
     );
   }
 }
 
 class Widget2 extends StatelessWidget {
-  final String data;
-  const Widget2({Key key, @required this.data}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -62,7 +57,7 @@ class Widget2 extends StatelessWidget {
           Container(
             child: Text('Widget2'),
           ),
-          Widget3(data: data),
+          Widget3(),
         ],
       ),
     );
@@ -70,13 +65,10 @@ class Widget2 extends StatelessWidget {
 }
 
 class Widget3 extends StatelessWidget {
-  final String data;
-  const Widget3({Key key, @required this.data}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(data),
+      child: Text(context.watch<String>()),
     );
   }
 }
