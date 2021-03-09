@@ -4,7 +4,20 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String data = 'TopLevel1 Data 1111';
+
+  void _onChangeState(newData) {
+    setState(() {
+      data = newData;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,50 +25,70 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: HomePage(
+        data: data,
+        onChange: _onChangeState,
+      ),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
+  final String data;
+  final Function onChange;
+  const HomePage({Key key, @required this.data, @required this.onChange})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          child: Text('data'),
+          child: Text(data),
         ),
       ),
       body: Center(
-        child: Widget1(),
+        child: Widget1(
+          data: data,
+          onChange: onChange,
+        ),
       ),
     );
   }
 }
 
 class Widget1 extends StatelessWidget {
-  Widget1();
+  final String data;
+  final Function onChange;
+  const Widget1({Key key, @required this.data, @required this.onChange})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Widget2(),
+      child: Widget2(
+        data: data,
+        onChange: onChange,
+      ),
     );
   }
 }
 
 class Widget2 extends StatelessWidget {
-  Widget2();
+  final String data;
+  final Function onChange;
+  const Widget2({Key key, @required this.data, @required this.onChange})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: [
-          Container(
-            child: Text('Widget2'),
+          MyTextFiled(
+            onChange: onChange,
           ),
-          Widget3(),
+          Widget3(data: data),
         ],
       ),
     );
@@ -63,21 +96,25 @@ class Widget2 extends StatelessWidget {
 }
 
 class Widget3 extends StatelessWidget {
-  Widget3();
+  final String data;
+  const Widget3({Key key, @required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('data'),
+      child: Text(data),
     );
   }
 }
 
 class MyTextFiled extends StatelessWidget {
+  final Function onChange;
+  const MyTextFiled({Key key, this.onChange}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: (newData) => {},
+      onChanged: (newData) => onChange(newData),
     );
   }
 }
