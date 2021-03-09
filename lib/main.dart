@@ -1,94 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:provider_rus/models/data.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  String data = 'TopLevel1 Data 1111';
-
-  void _onChangeState(newData) {
-    setState(() {
-      data = newData;
-    });
-  }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(
-        data: data,
-        onChange: _onChangeState,
+    return ChangeNotifierProvider<Data>(
+      create: (context) => Data(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: HomePage(),
       ),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  final String data;
-  final Function onChange;
-  const HomePage({Key key, @required this.data, @required this.onChange})
-      : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          child: Text(data),
+          child: Text(context.watch<Data>().getData),
         ),
       ),
       body: Center(
-        child: Widget1(
-          data: data,
-          onChange: onChange,
-        ),
+        child: Widget1(),
       ),
     );
   }
 }
 
 class Widget1 extends StatelessWidget {
-  final String data;
-  final Function onChange;
-  const Widget1({Key key, @required this.data, @required this.onChange})
-      : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Widget2(
-        data: data,
-        onChange: onChange,
-      ),
+      child: Widget2(),
     );
   }
 }
 
 class Widget2 extends StatelessWidget {
-  final String data;
-  final Function onChange;
-  const Widget2({Key key, @required this.data, @required this.onChange})
-      : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: [
-          MyTextFiled(
-            onChange: onChange,
-          ),
-          Widget3(data: data),
+          MyTextFiled(),
+          Widget3(),
         ],
       ),
     );
@@ -96,25 +62,27 @@ class Widget2 extends StatelessWidget {
 }
 
 class Widget3 extends StatelessWidget {
-  final String data;
-  const Widget3({Key key, @required this.data}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(data),
+      child: Text(context.watch<Data>().getData),
     );
   }
 }
 
 class MyTextFiled extends StatelessWidget {
-  final Function onChange;
-  const MyTextFiled({Key key, this.onChange}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: (newData) => onChange(newData),
+      //Здесь значение Listener флаг должен стоять в значении false,
+      //чтобы мы здесь получили доступ только к нужному методу в нашем классе,
+      //который наследуется от ChangeNotifire
+      //Здесь мы считываем те значения, которые потом необходимо над данными сделать
+      //Этот метод будет менять наши данные, а потом будет вызывать, а потом вызывать
+      //метод NotifyListeners и все наши виджеты, которые от него зависят, обновятся
+      // onChanged: (newData) =>
+      //     Provider.of<Data>(context, listen: false).changeString(newData),
+      onChanged: (newData) => context.read<Data>().changeString(newData),
     );
   }
 }
